@@ -7,13 +7,15 @@ Requires Pi 0.80.4 or newer and Node.js 22.19 or newer.
 ## Install
 
 ```bash
-pi install npm:@ogulcancelik/pi-codex-subagents
+pi install git:github.com/jrhuebers/pi-codex-subagents
 ```
+
+This standalone fork uses the package name `@jrhuebers/pi-codex-subagents`. The Git install above does not require an npm publication.
 
 For local development:
 
 ```bash
-pi install /absolute/path/to/pi-extensions/packages/pi-codex-subagents
+pi install /absolute/path/to/pi-codex-subagents
 ```
 
 ## Tools
@@ -174,14 +176,27 @@ Automatic completions, wait tools, and response tools follow Pi's standard 50 KB
 
 ## Tests
 
-Run the package regression suite with Bun and explicit test-only storage. The environment variables must be set before loading any test file, because modules imported by other tests may be cached before `core.test.ts` installs its mocks. The core harness rejects a non-isolated storage root rather than touching normal agent runs.
+From the standalone repository root:
 
 ```sh
-PI_CODING_AGENT_DIR=/tmp/pi-codex-subagents-tests \
-PI_SUBAGENT_TEMP_DIR=/tmp/pi-codex-subagents-tests/temp \
-bun test packages/pi-codex-subagents/{core,peek,picker,wait,transcript}.test.ts
+npm ci
+npm test
 ```
+
+The development dependencies include Bun, so no global Bun install is required. `allowScripts` approves only Bun's pinned installer for npm versions that require approval; if your package manager blocks it, run `node node_modules/bun/install.js`. The test runner runs `./{core,peek,picker,wait,transcript}.test.ts` sequentially in one Bun process, creates a unique temporary storage directory, sets `PI_CODING_AGENT_DIR` and `PI_SUBAGENT_TEMP_DIR` before loading any modules, and removes that directory afterward. This prevents cached imports and cleanup tests from touching normal Pi agent runs. The core harness refuses non-isolated storage. Child-process tests use `test/fake-rpc-child.js`, not model requests. Set `BUN_BIN=/absolute/path/to/bun` to use another test runner binary.
+
+For a real Pi startup/shutdown smoke without a model request:
+
+```sh
+npm run test:rpc
+```
+
+This loads only the standalone extension in a temporary working directory with isolated Pi and subagent storage, checks `get_state` and `/subagents` registration, and shuts Pi down by closing stdin. It does not use live settings or credentials.
+
+## Attribution and history
+
+Extracted with `git subtree split` from `packages/pi-codex-subagents` in [Can Celik's pi-extensions](https://github.com/ogulcancelik/pi-extensions), including the changes on `fix/subagent-picker-lag` through source commit `b2096ca9bd159e80c24fbb9a1b17cc0794a715e2`. Package history and original authorship are preserved; subtree splitting rewrites commit IDs. The original extension API and `pi-codex-subagents` configuration/storage names are unchanged.
 
 ## License
 
-MIT
+MIT — Copyright (c) 2025 Can Celik. See [LICENSE](LICENSE).

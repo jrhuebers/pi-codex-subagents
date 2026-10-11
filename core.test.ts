@@ -5,10 +5,14 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { visibleWidth } from "@earendil-works/pi-tui";
 
-const TEST_AGENT_DIR = "/tmp/pi-codex-subagents-tests";
+const TEST_AGENT_DIR = process.env.PI_CODING_AGENT_DIR;
+if (!TEST_AGENT_DIR || !path.isAbsolute(TEST_AGENT_DIR)
+  || path.dirname(TEST_AGENT_DIR) !== os.tmpdir()
+  || !path.basename(TEST_AGENT_DIR).startsWith("pi-codex-subagents-tests-")
+  || process.env.PI_SUBAGENT_TEMP_DIR !== path.join(TEST_AGENT_DIR, "temp")) {
+  throw new Error("Tests require isolated temporary storage. Run npm test.");
+}
 const FAKE_RPC_CHILD = path.join(import.meta.dir, "test", "fake-rpc-child.js");
-process.env.PI_CODING_AGENT_DIR = TEST_AGENT_DIR;
-process.env.PI_SUBAGENT_TEMP_DIR = path.join(TEST_AGENT_DIR, "temp");
 // Reset only test-owned configuration left by an interrupted prior run.
 fs.mkdirSync(path.join(TEST_AGENT_DIR, "pi-codex-subagents"), { recursive: true });
 for (const name of ["config.json", "SYSTEM.md"]) {
@@ -39,7 +43,7 @@ const {
 } = await import("./core.js");
 const { formatAgentSpecLines } = await import("./peek.js");
 if (SUBAGENT_DIR !== path.join(TEST_AGENT_DIR, "pi-codex-subagents")) {
-  throw new Error("Tests must use isolated storage. Set PI_CODING_AGENT_DIR=/tmp/pi-codex-subagents-tests before running a multi-file suite.");
+  throw new Error("Tests must use isolated storage before loading any module. Run npm test.");
 }
 
 

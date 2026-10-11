@@ -1,5 +1,5 @@
 {
-  "name": "@ogulcancelik/pi-codex-subagents",
+  "name": "@jrhuebers/pi-codex-subagents",
   "version": "0.3.5",
   "description": "Codex-shaped, session-scoped subagents for Pi with templates, waits, steering, and a live overlay.",
   "type": "module",
@@ -15,13 +15,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ogulcancelik/pi-extensions.git",
-    "directory": "packages/pi-codex-subagents"
+    "url": "git+https://github.com/jrhuebers/pi-codex-subagents.git"
   },
   "bugs": {
-    "url": "https://github.com/ogulcancelik/pi-extensions/issues"
+    "url": "https://github.com/jrhuebers/pi-codex-subagents/issues"
   },
-  "homepage": "https://github.com/ogulcancelik/pi-extensions/tree/main/packages/pi-codex-subagents#readme",
+  "homepage": "https://github.com/jrhuebers/pi-codex-subagents#readme",
   "engines": {
     "node": ">=22.19.0"
   },
@@ -48,5 +47,19 @@
     "transcript.ts",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "scripts": {
+    "test": "node test/run-tests.mjs",
+    "test:rpc": "node test/rpc-smoke.mjs"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "0.99.2",
+    "@earendil-works/pi-coding-agent": "0.99.2",
+    "@earendil-works/pi-tui": "0.99.2",
+    "typebox": "1.1.38",
+    "bun": "1.4.3"
+  },
+  "allowScripts": {
+    "bun@1.4.3": true
+  }
 }
